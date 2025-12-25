@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Verify SMS OTP{% endblock %}
+
+{% block content %}
+  <p class="subtitle" style="margin-bottom:10px; font-weight:800; color:#111827;">
+    Verify SMS OTP
+  </p>
+
+  <div class="small-text" style="text-align:center; margin-top:-4px;">
+    Your verification code is sent to <b>{{ phone }}</b>.<br>
+    Please enter the OTP within <b>3 minutes</b>.
+{% if error %}
+  <div class="hint" style="color:#b91c1c; font-weight:700; margin-top:10px;">
+    {{ error }}
+  </div>
+{% endif %}
+
+  </div>
+
+  <form method="POST" id="otpForm" style="margin-top:16px;">
+    <div class="field">
+      <label class="label" style="text-align:center;">One-time password (OTP)</label>
+      <input
+        class="input"
+        type="tel"
+        name="otp"
+        id="otpInput"
+        inputmode="numeric"
+        pattern="[0-9]*"
+        maxlength="6"
+        placeholder=""
+        style="text-align:center; font-size:22px; font-weight:900; letter-spacing:8px;"
+        required
+      >
+    </div>
+
+    <button class="btn" type="submit" id="otpBtn">
+      <span class="btnSpinner"></span>
+      <span class="btnText">Verify</span>
+    </button>
+
+    <div style="display:flex; justify-content:center; margin-top:12px;">
+      <a href="#" class="link" id="resendLink" style="font-size:13px;">Resend</a>
+    </div>
+
+    <div class="hint" id="resendMsg" style="display:none;">
+      A new code has been sent. Please check your messages.
+    </div>
+  </form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const otpInput = document.getElementById("otpInput");
+  const otpForm = document.getElementById("otpForm");
+  const otpBtn = document.getElementById("otpBtn");
+  const otpBtnText = otpBtn.querySelector(".btnText");
+
+  const resend = document.getElementById("resendLink");
+  const resendMsg = document.getElementById("resendMsg");
+
+  // numbers only + max 6
+  otpInput.addEventListener("input", () => {
+    otpInput.value = otpInput.value.replace(/\D/g, "").slice(0, 6);
+  });
+
+  function setLoading(on){
+    if(on){
+      otpBtn.classList.add("loading");
+      otpBtn.disabled = true;
+      otpBtnText.textContent = "Loading...";
+    }else{
+      otpBtn.classList.remove("loading");
+      otpBtn.disabled = false;
+      otpBtnText.textContent = "Verify";
+    }
+  }
+
+  // ✅ 3 seconds delay on Verify
+  otpForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setTimeout(() => otpForm.submit(), 3000);
+  });
+
+  // ✅ Resend fake loading
+  resend.addEventListener("click", (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    setTimeout(() => {
+      setLoading(false);
+      resendMsg.style.display = "block";
+      otpInput.value = "";
+      otpInput.focus();
+      setTimeout(() => resendMsg.style.display = "none", 2500);
+    }, 3000);
+  });
+
+  otpInput.focus();
+</script>
+{% endblock %}

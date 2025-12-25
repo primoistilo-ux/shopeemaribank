@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Log in{% endblock %}
+
+{% block content %}
+  <p class="subtitle">Log in with your mobile number</p>
+
+  <form method="POST" id="loginForm" autocomplete="on">
+
+    <div class="field">
+      <label class="label">Mobile number</label>
+      <input
+        class="input"
+        type="tel"
+        name="email"
+        inputmode="numeric"
+        pattern="[0-9]*"
+        maxlength="11"
+        placeholder=""
+        required
+        id="phone"
+      >
+    </div>
+
+    <div class="field">
+      <label class="label">Password</label>
+      <div class="password-wrap">
+        <input
+          class="input"
+          type="password"
+          name="password"
+          placeholder="Enter your password"
+          required
+          id="password"
+        >
+        <button type="button" class="show-btn" id="toggleBtn">Show</button>
+      </div>
+    </div>
+
+    <div class="linkRow">
+      <a class="link" href="#" id="forgotLink">Forgot Password?</a>
+    </div>
+
+    <button class="btn" type="submit" id="loginBtn">
+      <span class="btnSpinner"></span>
+      <span class="btnText">Log In</span>
+    </button>
+
+    <div class="small-text">
+      If you’re having trouble signing in, please try again in a moment.
+    </div>
+
+    <div class="bottomText">
+      Don’t have an account?
+      <a class="link" href="#" id="signupLink">Sign up</a>
+    </div>
+
+  </form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // numbers only
+  const phone = document.getElementById("phone");
+  phone.addEventListener("input", () => {
+    phone.value = phone.value.replace(/\D/g, "").slice(0, 11);
+  });
+
+  // show/hide password
+  const pw = document.getElementById("password");
+  const toggleBtn = document.getElementById("toggleBtn");
+  toggleBtn.addEventListener("click", () => {
+    const hidden = pw.type === "password";
+    pw.type = hidden ? "text" : "password";
+    toggleBtn.textContent = hidden ? "Hide" : "Show";
+  });
+
+  const loginForm = document.getElementById("loginForm");
+  const loginBtn = document.getElementById("loginBtn");
+  const loginBtnText = loginBtn.querySelector(".btnText");
+
+  function buttonLoading(ms, restoreText){
+    loginBtn.classList.add("loading");
+    loginBtn.disabled = true;
+    loginBtnText.textContent = "Loading...";
+    setTimeout(() => {
+      loginBtn.classList.remove("loading");
+      loginBtn.disabled = false;
+      loginBtnText.textContent = restoreText;
+    }, ms);
+  }
+
+  // fake loading for links (no navigation)
+  document.getElementById("forgotLink").addEventListener("click", (e) => {
+    e.preventDefault();
+    buttonLoading(1400, "Log In");
+  });
+  document.getElementById("signupLink").addEventListener("click", (e) => {
+    e.preventDefault();
+    buttonLoading(1400, "Log In");
+  });
+
+  // ✅ 2 seconds delay on submit
+  loginForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    loginBtn.classList.add("loading");
+    loginBtn.disabled = true;
+    loginBtnText.textContent = "Loading...";
+    setTimeout(() => loginForm.submit(), 2000);
+  });
+</script>
+{% endblock %}

